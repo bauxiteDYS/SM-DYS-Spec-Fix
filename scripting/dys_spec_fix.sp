@@ -1,3 +1,5 @@
+#include <sourcemod>
+
 public Plugin myinfo = {
 	name = "Dys Spec Fix",
 	author = "bauxite",

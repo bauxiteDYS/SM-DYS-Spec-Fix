@@ -2,34 +2,34 @@ public Plugin myinfo = {
 	name = "Dys Spec Fix",
 	author = "bauxite",
 	description = "Fix for spectators after map_restart",
-	version = "0.1.1",
+	version = "0.2.0",
 	url = "",
 };
 
 public void OnPluginStart()	
 {
-	if(!AddCommandListener(OnMapRestart, "map_restart"))
+	if(!HookEventEx("round_restart", OnRoundStart, EventHookMode_PostNoCopy))
 	{
-		SetFailState("Failed to add command listener");
+		SetFailState("Failed to hook event");
 	}
 }
 
-public Action OnMapRestart(int client, const char[] command, int argc)
+public void OnRoundStart(Event event, const char[] name, bool dontBroadcast)
 {
-	for(int i = 1; i <= MaxClients; i++)
-	{
-		RequestFrame(SetObserverMode, i);
-	}
+	//PrintToServer("map restart event");
 	
-	return Plugin_Continue;
+	RequestFrame(SetObserverMode);
 }
 
-void SetObserverMode(int client) 
+void SetObserverMode() 
 {
 	//need to make sure we don't set obs mode for players not in spec team
 	
-	if(IsClientInGame(client) && GetClientTeam(client) == 1) 
+	for(int client = 1; client <= MaxClients; client++)
 	{
-		SetEntProp(client, Prop_Data, "m_iObserverMode", 7);
+		if(IsClientInGame(client) && GetClientTeam(client) == 1) 
+		{
+			SetEntProp(client, Prop_Data, "m_iObserverMode", 7);
+		}
 	}
 }
